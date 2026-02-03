@@ -1,0 +1,141 @@
+<div class="announcement-page">
+    <div class="header-actions">
+        <!-- Filter Buttons -->
+        <div class="categories">
+            <a href="/announcements?category=all" class="cat-pill <%= category === 'all' ? 'active' : '' %>">Semua</a>
+            <a href="/announcements?category=important"
+                class="cat-pill <%= category === 'important' ? 'active' : '' %>">Penting</a>
+            <a href="/announcements?category=event"
+                class="cat-pill <%= category === 'event' ? 'active' : '' %>">Kegiatan</a>
+            <a href="/announcements?category=documentation"
+                class="cat-pill <%= category === 'documentation' ? 'active' : '' %>">Dokumentasi</a>
+        </div>
+
+        <% if (user.role==='admin' ) { %>
+            <button class="btn-primary" onclick="document.getElementById('announceModal').style.display='block'">
+                <i class="fas fa-plus"></i> Buat Pengumuman
+            </button>
+            <% } %>
+    </div>
+
+    <!-- Announcement Feed -->
+    <div class="feed">
+        <% if (announcements.length===0) { %>
+            <div class="empty-state">Belum ada pengumuman.</div>
+            <% } %>
+
+                <% announcements.forEach(a=> { %>
+                    <div class="card announce-card border-<%= a.category %>">
+                        <div class="card-body">
+                            <span class="badge badge-<%= a.category %>">
+                                <%= a.category %>
+                            </span>
+                            <small class="text-muted">
+                                <%= new Date(a.date_created).toLocaleDateString() %>
+                            </small>
+                            <h3>
+                                <%= a.title %>
+                            </h3>
+                            <p>
+                                <%= a.content %>
+                            </p>
+
+                            <% if (user.role==='admin' ) { %>
+                                <a href="/announcements/delete/<%= a.id %>" class="delete-link"
+                                    onclick="return confirm('Hapus?')"><i class="fas fa-trash"></i></a>
+                                <% } %>
+                        </div>
+                    </div>
+                    <% }) %>
+    </div>
+</div>
+
+<% if (user.role==='admin' ) { %>
+    <!-- Add Modal -->
+    <div id="announceModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('announceModal').style.display='none'">&times;</span>
+            <h3>Buat Pengumuman</h3>
+            <form action="/announcements/add" method="POST">
+                <div class="form-group">
+                    <label>Judul</label>
+                    <input type="text" name="title" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select name="category" class="form-control">
+                        <option value="important">Penting</option>
+                        <option value="event">Kegiatan</option>
+                        <option value="documentation">Dokumentasi</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Isi Pengumuman</label>
+                    <textarea name="content" rows="4" required class="form-control"></textarea>
+                </div>
+                <button type="submit" class="btn-primary w-100">Publikasi</button>
+            </form>
+        </div>
+    </div>
+    <% } %>
+
+        <style>
+            .header-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+            }
+
+            .categories {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .cat-pill {
+                padding: 0.5rem 1rem;
+                background: white;
+                border-radius: 99px;
+                color: #718096;
+                text-decoration: none;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+                transition: 0.2s;
+            }
+
+            .cat-pill.active {
+                background: #764ba2;
+                color: white;
+            }
+
+            .feed {
+                display: grid;
+                gap: 1.5rem;
+            }
+
+            .announce-card {
+                background: white;
+                border-radius: 1rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+                border-left: 5px solid #ccc;
+                position: relative;
+            }
+
+            .border-important {
+                border-left-color: #f56565;
+            }
+
+            .border-event {
+                border-left-color: #48bb78;
+            }
+
+            .border-documentation {
+                border-left-color: #4299e1;
+            }
+
+            .delete-link {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                color: #f56565;
+            }
+        </style>

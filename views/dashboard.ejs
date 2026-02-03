@@ -1,0 +1,232 @@
+<div class="dashboard-grid">
+    <!-- Stats Cards: Fund Balances -->
+    <div class="stat-card">
+        <div class="icon-wrapper blue">
+            <i class="fas fa-home"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Kas Perumahan</h3>
+            <p>Rp <%= (stats.balances && stats.balances.housing || 0).toLocaleString('id-ID') %>
+            </p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="icon-wrapper orange">
+            <i class="fas fa-hand-holding-heart"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Dana Sosial</h3>
+            <p>Rp <%= (stats.balances && stats.balances.social || 0).toLocaleString('id-ID') %>
+            </p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="icon-wrapper green">
+            <i class="fas fa-users-cog"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Kas RT</h3>
+            <p>Rp <%= (stats.balances && stats.balances.rt || 0).toLocaleString('id-ID') %>
+            </p>
+        </div>
+    </div>
+    <div class="stat-card total-balance-card">
+        <div class="icon-wrapper gold">
+            <i class="fas fa-vault"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Total Kas Keseluruhan</h3>
+            <p>Rp <%= (stats.totalBalance || 0).toLocaleString('id-ID') %>
+            </p>
+        </div>
+    </div>
+
+    <% if (user.role==='resident' ) { %>
+        <div class="stat-card">
+            <div class="icon-wrapper purple">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Status Iuran (<%= currentMonthLabel %>)</h3>
+                <div class="status-badges">
+                    <% stats.residentStatus.forEach(status=> { %>
+                        <span class="badge-status <%= status === 'LUNAS' ? 'bg-success' : 'bg-danger' %>">
+                            <%= status %>
+                        </span>
+                        <% }) %>
+                </div>
+            </div>
+        </div>
+        <% } else { %>
+            <div class="stat-card">
+                <div class="icon-wrapper red">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Menunggu Konfirmasi</h3>
+                    <p class="<%= stats.pendingPayments > 0 ? 'text-danger' : '' %>">
+                        <%= stats.pendingPayments %> Pembayaran
+                    </p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="icon-wrapper blue">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Warga</h3>
+                    <p>
+                        <%= stats.residents %> KK
+                    </p>
+                </div>
+            </div>
+            <% } %>
+
+                <!-- Charts Area -->
+                <div class="chart-container full-width">
+                    <h3>Arus Kas Bulanan</h3>
+                    <canvas id="cashflowChart"></canvas>
+                </div>
+</div>
+
+<script>
+    // Placeholder for chart initialization
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('cashflowChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'],
+                datasets: [{
+                    label: 'Pemasukan',
+                    data: [<%= stats.cashflow.income.join(', ') %>],
+                    borderColor: '#48bb78',
+                    backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Pengeluaran',
+                    data: [<%= stats.cashflow.expense.join(', ') %>],
+                    borderColor: '#f56565',
+                    backgroundColor: 'rgba(245, 101, 101, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .icon-wrapper {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .blue {
+        background: #667eea;
+    }
+
+    .orange {
+        background: #ed8936;
+    }
+
+    .red {
+        background: #f56565;
+    }
+
+    .green {
+        background: #48bb78;
+    }
+
+    .gold {
+        background: #ecc94b;
+    }
+
+    .purple {
+        background: #9f7aea;
+    }
+
+    .text-success {
+        color: #48bb78;
+    }
+
+    .text-danger {
+        color: #f56565;
+    }
+
+    .badge-status {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: white;
+        margin-right: 0.25rem;
+        margin-top: 0.25rem;
+    }
+
+    .bg-success {
+        background-color: #48bb78;
+    }
+
+    .bg-danger {
+        background-color: #f56565;
+    }
+
+    .stat-info h3 {
+        font-size: 0.9rem;
+        color: #718096;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-info p {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3748;
+    }
+
+    .chart-container {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+</style>
