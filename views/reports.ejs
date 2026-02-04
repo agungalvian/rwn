@@ -84,6 +84,7 @@
                     <tr>
                         <th>Tanggal</th>
                         <th>Keterangan</th>
+                        <th>Warga</th>
                         <th>Sumber Dana</th>
                         <th>Kategori</th>
                         <th>Masuk</th>
@@ -99,6 +100,9 @@
                             </td>
                             <td>
                                 <%= m.description %>
+                            </td>
+                            <td>
+                                <%= m.resident_name || '-' %>
                             </td>
                             <td>
                                 <% if(m.fund_type==='housing' ) { %> <span class="badge bg-blue-light">Perumahan</span>

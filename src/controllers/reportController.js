@@ -18,7 +18,14 @@ exports.viewReports = (req, res) => {
         params.push(`%-${month}-%`);
     }
 
-    const query = `SELECT * FROM mutations ${whereClause} ORDER BY date DESC`;
+    const query = `
+        SELECT m.*, u.full_name as resident_name 
+        FROM mutations m 
+        LEFT JOIN payments p ON m.payment_id = p.id 
+        LEFT JOIN users u ON p.user_id = u.id 
+        ${whereClause} 
+        ORDER BY m.date DESC
+    `;
 
     db.all(query, params, (err, rows) => {
         if (err) return res.status(500).send('Database Error');
@@ -78,7 +85,14 @@ exports.viewReports = (req, res) => {
 };
 
 exports.viewMutations = (req, res) => {
-    db.all('SELECT * FROM mutations ORDER BY date DESC', (err, rows) => {
+    const query = `
+        SELECT m.*, u.full_name as resident_name 
+        FROM mutations m 
+        LEFT JOIN payments p ON m.payment_id = p.id 
+        LEFT JOIN users u ON p.user_id = u.id 
+        ORDER BY m.date DESC
+    `;
+    db.all(query, (err, rows) => {
         if (err) return res.status(500).send('Database Error');
 
         const aggregatedMutations = [];
