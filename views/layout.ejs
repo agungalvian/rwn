@@ -40,7 +40,7 @@
                     <li><a href="/mutations" class="<%= path === '/mutations' ? 'active' : '' %>"><i
                                 class="fas fa-exchange-alt"></i> Mutasi Keuangan</a></li>
                     <li><a href="/matrix" class="<%= path === '/matrix' ? 'active' : '' %>"><i
-                                class="fas fa-calendar-check"></i> Tunggakan Warga</a></li>
+                                class="fas fa-calendar-check"></i> Status Iuran Warga</a></li>
                     <li><a href="/admins" class="<%= path === '/admins' ? 'active' : '' %>"><i
                                 class="fas fa-user-shield"></i> Kelola Admin</a></li>
                     <li><a href="/settings" class="<%= path === '/settings' ? 'active' : '' %>"><i
@@ -56,7 +56,7 @@
                                         class="fas fa-chart-line"></i> Laporan Keuangan</a></li>
             </ul>
             <div class="user-info">
-                <p>Halo, <%= user.username %>
+                <p>Halo, <%= user.full_name %>
                 </p>
                 <div class="user-actions">
                     <a href="/profile" class="profile-link <%= path === '/profile' ? 'active' : '' %>"><i

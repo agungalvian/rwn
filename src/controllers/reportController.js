@@ -206,7 +206,7 @@ exports.viewPaymentMatrix = (req, res) => {
             });
 
             res.render('payment_matrix', {
-                title: 'Data Tunggakan Warga',
+                title: 'Status Iuran Warga',
                 user: req.session.user,
                 residents: residents,
                 paymentMap: paymentMap,
