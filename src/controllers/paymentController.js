@@ -36,7 +36,7 @@ exports.myPayments = (req, res) => {
 // Resident: Submit Payment
 exports.submitPayment = (req, res) => {
     const { months } = req.body; // Array of months
-    const proof_image = req.file ? '/uploads/' + req.file.filename : null;
+    const proof_image = req.file ? req.file.filename : null;
     const userId = req.session.userId;
 
     if (!proof_image) {
@@ -115,7 +115,7 @@ exports.updateStatus = (req, res) => {
 
         if (status === 'approved') {
             // Fetch breakdown to record individual mutations
-            db.get('SELECT breakdown_json, month_paid_for, user_id FROM payments WHERE id = ?', [id], (err, payment) => {
+            db.get('SELECT breakdown_json, month_paid_for, user_id, proof_image FROM payments WHERE id = ?', [id], (err, payment) => {
                 if (err || !payment || !payment.breakdown_json) {
                     return res.redirect('/payments');
                 }
@@ -125,11 +125,11 @@ exports.updateStatus = (req, res) => {
                     const desc = `Iuran ${payment.month_paid_for}`;
 
                     db.serialize(() => {
-                        const stmt = db.prepare('INSERT INTO mutations (type, amount, description, category, fund_type, payment_id) VALUES (?, ?, ?, ?, ?, ?)');
+                        const stmt = db.prepare('INSERT INTO mutations (type, amount, description, category, fund_type, payment_id, proof_image) VALUES (?, ?, ?, ?, ?, ?, ?)');
 
-                        if (breakdown.housing > 0) stmt.run('in', breakdown.housing, desc, 'iuran', 'housing', id);
-                        if (breakdown.social > 0) stmt.run('in', breakdown.social, desc, 'iuran', 'social', id);
-                        if (breakdown.rt > 0) stmt.run('in', breakdown.rt, desc, 'iuran', 'rt', id);
+                        if (breakdown.housing > 0) stmt.run('in', breakdown.housing, desc, 'iuran', 'housing', id, payment.proof_image);
+                        if (breakdown.social > 0) stmt.run('in', breakdown.social, desc, 'iuran', 'social', id, payment.proof_image);
+                        if (breakdown.rt > 0) stmt.run('in', breakdown.rt, desc, 'iuran', 'rt', id, payment.proof_image);
 
                         stmt.finalize(() => {
                             res.redirect('/payments');

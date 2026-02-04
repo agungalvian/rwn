@@ -38,7 +38,8 @@
                             <%= p.month_paid_for %>
                         </td>
                         <td>
-                            <a href="<%= p.proof_image %>" target="_blank" class="btn-link">Lihat Bukti</a>
+                            <a href="<%= p.proof_image.startsWith('/') ? p.proof_image : '/uploads/' + p.proof_image %>"
+                                target="_blank" class="btn-link">Lihat Bukti</a>
                         </td>
                         <td>
                             <%= new Date(p.date_submitted).toLocaleDateString() %>

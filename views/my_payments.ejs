@@ -94,6 +94,7 @@
                         <tr>
                             <th>Bulan</th>
                             <th>Tanggal Kirim</th>
+                            <th>Bukti</th>
                             <th>Status</th>
                             <th>Keterangan Admin</th>
                         </tr>
@@ -106,6 +107,13 @@
                                 </td>
                                 <td>
                                     <%= new Date(p.date_submitted).toLocaleDateString() %>
+                                </td>
+                                <td>
+                                    <% if (p.proof_image) { %>
+                                        <a href="<%= p.proof_image.startsWith('/') ? p.proof_image : '/uploads/' + p.proof_image %>" target="_blank" class="btn-link">Lihat</a>
+                                    <% } else { %>
+                                        <span class="text-muted">-</span>
+                                    <% } %>
                                 </td>
                                 <td>
                                     <span class="badge badge-<%= p.status %>">

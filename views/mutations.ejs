@@ -119,7 +119,8 @@
                                     </td>
                                     <td>
                                         <% if (m.proof_image) { %>
-                                            <a href="/uploads/<%= m.proof_image %>" target="_blank" class="btn-proof">
+                                            <a href="<%= m.proof_image.startsWith('/') ? m.proof_image : '/uploads/' + m.proof_image %>"
+                                                target="_blank" class="btn-proof">
                                                 <i class="fas fa-image"></i> Lihat
                                             </a>
                                             <% } else { %>
