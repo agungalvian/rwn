@@ -326,6 +326,11 @@ a {
 }
 
 @media (max-width: 992px) {
+    body {
+        height: auto;
+        overflow: auto;
+    }
+
     .sidebar {
         position: fixed;
         left: -260px;
@@ -359,7 +364,9 @@ a {
     }
 
     .main-content {
-        padding: 1.5rem 1rem;
+        padding: 1.5rem 1rem 5rem 1rem;
+        height: auto;
+        overflow: visible;
     }
 
     /* Grid & Card Adjustments */
