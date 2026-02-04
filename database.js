@@ -104,10 +104,19 @@ async function initDb() {
                 month_paid_for TEXT NOT NULL,
                 breakdown_json TEXT,
                 proof_image TEXT,
+                payment_date DATE,
                 status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
                 admin_note TEXT,
                 date_submitted TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`);
+
+            // Migration: Add payment_date if not exists
+            await pool.query(`DO $$ 
+                BEGIN 
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='payments' AND column_name='payment_date') THEN
+                        ALTER TABLE payments ADD COLUMN payment_date DATE;
+                    END IF;
+                END $$;`);
 
             // Mutations Table
             await pool.query(`CREATE TABLE IF NOT EXISTS mutations (

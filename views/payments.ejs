@@ -17,7 +17,8 @@
                     <th>Warga</th>
                     <th>Bulan Tagihan</th>
                     <th>Bukti</th>
-                    <th>Tanggal</th>
+                    <th>Tgl Bayar</th>
+                    <th>Tgl Kirim</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -42,7 +43,10 @@
                                 target="_blank" class="btn-link">Lihat Bukti</a>
                         </td>
                         <td>
-                            <%= new Date(p.date_submitted).toLocaleDateString() %>
+                            <%= p.payment_date ? new Date(p.payment_date).toLocaleDateString('id-ID') : '-' %>
+                        </td>
+                        <td>
+                            <%= new Date(p.date_submitted).toLocaleDateString('id-ID') %>
                         </td>
                         <td>
                             <% if (p.status==='pending' ) { %>

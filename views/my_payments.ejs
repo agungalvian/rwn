@@ -55,6 +55,12 @@
                                     </div>
 
                                     <div class="form-group mt-3">
+                                        <label>Tanggal Bayar (Sesuai Bukti Transfer)</label>
+                                        <input type="date" name="payment_date" class="form-control" required
+                                            value="<%= new Date().toISOString().split('T')[0] %>">
+                                    </div>
+
+                                    <div class="form-group mt-3">
                                         <label>Bukti Transfer (Screenshot/Foto)</label>
                                         <input type="file" name="proof_image" class="form-control" accept="image/*"
                                             required>
@@ -93,7 +99,8 @@
                     <thead>
                         <tr>
                             <th>Bulan</th>
-                            <th>Tanggal Kirim</th>
+                            <th>Tgl Bayar</th>
+                            <th>Tgl Kirim</th>
                             <th>Bukti</th>
                             <th>Status</th>
                             <th>Keterangan Admin</th>
@@ -106,7 +113,10 @@
                                     <%= p.month_paid_for %>
                                 </td>
                                 <td>
-                                    <%= new Date(p.date_submitted).toLocaleDateString() %>
+                                    <%= p.payment_date ? new Date(p.payment_date).toLocaleDateString('id-ID') : '-' %>
+                                </td>
+                                <td>
+                                    <%= new Date(p.date_submitted).toLocaleDateString('id-ID') %>
                                 </td>
                                 <td>
                                     <% if (p.proof_image) { %>
