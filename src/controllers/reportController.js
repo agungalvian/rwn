@@ -8,14 +8,14 @@ exports.viewReports = (req, res) => {
     let params = [];
 
     if (month && year) {
-        whereClause = 'WHERE date LIKE ?';
-        params.push(`${year}-${month}-%`);
+        whereClause = 'WHERE EXTRACT(YEAR FROM m.date) = ? AND EXTRACT(MONTH FROM m.date) = ?';
+        params.push(year, month);
     } else if (year) {
-        whereClause = 'WHERE date LIKE ?';
-        params.push(`${year}-%`);
+        whereClause = 'WHERE EXTRACT(YEAR FROM m.date) = ?';
+        params.push(year);
     } else if (month) {
-        whereClause = 'WHERE date LIKE ?';
-        params.push(`%-${month}-%`);
+        whereClause = 'WHERE EXTRACT(MONTH FROM m.date) = ?';
+        params.push(month);
     }
 
     const query = `
