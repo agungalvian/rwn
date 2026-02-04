@@ -39,6 +39,10 @@ const settingsRoutes = require('./src/routes/settingsRoutes');
 app.use((req, res, next) => {
     res.locals.user = req.session.user || null;
     res.locals.path = req.path;
+    res.locals.formatNumber = (num) => {
+        const n = Number(num);
+        return isNaN(n) ? '0' : n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
     next();
 });
 

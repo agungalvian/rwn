@@ -12,11 +12,20 @@
 </head>
 
 <body>
+    <div class="mobile-header">
+        <button id="sidebarToggle" class="btn-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <img src="/img/logo.png" alt="Rawinda Pratama" class="mobile-logo">
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="app-container">
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="brand">
-                <h3>Rawinda Pratama</h3>
+                <img src="/img/logo.png" alt="Logo" class="sidebar-logo">
             </div>
             <ul class="nav-links">
                 <li><a href="/dashboard" class="<%= path === '/dashboard' ? 'active' : '' %>"><i
@@ -73,6 +82,25 @@
             </div>
         </main>
     </div>
+    <script>
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const toggleBtn = document.getElementById('sidebarToggle');
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+    </script>
 </body>
 
 </html>

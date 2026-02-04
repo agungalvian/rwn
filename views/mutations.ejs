@@ -112,10 +112,10 @@
                                             <%= m.category %>
                                         </span></td>
                                     <td class="text-success">
-                                        <%= m.type==='in' ? 'Rp ' + m.amount.toLocaleString('id-ID') : '-' %>
+                                        <%= m.type==='in' ? 'Rp ' + formatNumber(m.amount) : '-' %>
                                     </td>
                                     <td class="text-danger">
-                                        <%= m.type==='out' ? 'Rp ' + m.amount.toLocaleString('id-ID') : '-' %>
+                                        <%= m.type==='out' ? 'Rp ' + formatNumber(m.amount) : '-' %>
                                     </td>
                                     <td>
                                         <% if (m.proof_image) { %>

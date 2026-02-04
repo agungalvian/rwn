@@ -36,38 +36,38 @@
         <div class="card bg-blue">
             <h3>Kas Perumahan</h3>
             <div class="flex-between">
-                <span>Masuk: Rp <%= summary.housing.in.toLocaleString('id-ID') %></span>
-                <span>Keluar: Rp <%= summary.housing.out.toLocaleString('id-ID') %></span>
+                <span>Masuk: Rp <%= formatNumber(summary.housing.in) %></span>
+                <span>Keluar: Rp <%= formatNumber(summary.housing.out) %></span>
             </div>
             <hr>
-            <p>Saldo: <strong>Rp <%= summary.housing.balance.toLocaleString('id-ID') %></strong></p>
+            <p>Saldo: <strong>Rp <%= formatNumber(summary.housing.balance) %></strong></p>
         </div>
         <div class="card bg-orange">
             <h3>Dana Sosial</h3>
             <div class="flex-between">
-                <span>Masuk: Rp <%= summary.social.in.toLocaleString('id-ID') %></span>
-                <span>Keluar: Rp <%= summary.social.out.toLocaleString('id-ID') %></span>
+                <span>Masuk: Rp <%= formatNumber(summary.social.in) %></span>
+                <span>Keluar: Rp <%= formatNumber(summary.social.out) %></span>
             </div>
             <hr>
-            <p>Saldo: <strong>Rp <%= summary.social.balance.toLocaleString('id-ID') %></strong></p>
+            <p>Saldo: <strong>Rp <%= formatNumber(summary.social.balance) %></strong></p>
         </div>
         <div class="card bg-green">
             <h3>Kas RT</h3>
             <div class="flex-between">
-                <span>Masuk: Rp <%= summary.rt.in.toLocaleString('id-ID') %></span>
-                <span>Keluar: Rp <%= summary.rt.out.toLocaleString('id-ID') %></span>
+                <span>Masuk: Rp <%= formatNumber(summary.rt.in) %></span>
+                <span>Keluar: Rp <%= formatNumber(summary.rt.out) %></span>
             </div>
             <hr>
-            <p>Saldo: <strong>Rp <%= summary.rt.balance.toLocaleString('id-ID') %></strong></p>
+            <p>Saldo: <strong>Rp <%= formatNumber(summary.rt.balance) %></strong></p>
         </div>
         <div class="card bg-gold">
             <h3>Total Kas Keseluruhan</h3>
             <div class="flex-between">
-                <span>Total Masuk: Rp <%= summary.total.in.toLocaleString('id-ID') %></span>
-                <span>Total Keluar: Rp <%= summary.total.out.toLocaleString('id-ID') %></span>
+                <span>Total Masuk: Rp <%= formatNumber(summary.total.in) %></span>
+                <span>Total Keluar: Rp <%= formatNumber(summary.total.out) %></span>
             </div>
             <hr>
-            <p>Saldo Akhir: <strong>Rp <%= summary.total.balance.toLocaleString('id-ID') %></strong></p>
+            <p>Saldo Akhir: <strong>Rp <%= formatNumber(summary.total.balance) %></strong></p>
         </div>
     </div>
 
@@ -117,10 +117,10 @@
                                     <%= m.category %>
                                 </span></td>
                             <td class="text-success">
-                                <%= m.type==='in' ? 'Rp ' + m.amount.toLocaleString('id-ID') : '-' %>
+                                <%= m.type==='in' ? 'Rp ' + formatNumber(m.amount) : '-' %>
                             </td>
                             <td class="text-danger">
-                                <%= m.type==='out' ? 'Rp ' + m.amount.toLocaleString('id-ID') : '-' %>
+                                <%= m.type==='out' ? 'Rp ' + formatNumber(m.amount) : '-' %>
                             </td>
                             <td>
                                 <% if (m.proof_image) { %>

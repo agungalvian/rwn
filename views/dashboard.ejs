@@ -6,7 +6,7 @@
         </div>
         <div class="stat-info">
             <h3>Kas Perumahan</h3>
-            <p>Rp <%= (stats.balances && stats.balances.housing || 0).toLocaleString('id-ID') %>
+            <p>Rp <%= formatNumber(stats.balances && stats.balances.housing || 0) %>
             </p>
         </div>
     </div>
@@ -17,7 +17,7 @@
         </div>
         <div class="stat-info">
             <h3>Dana Sosial</h3>
-            <p>Rp <%= (stats.balances && stats.balances.social || 0).toLocaleString('id-ID') %>
+            <p>Rp <%= formatNumber(stats.balances && stats.balances.social || 0) %>
             </p>
         </div>
     </div>
@@ -28,7 +28,7 @@
         </div>
         <div class="stat-info">
             <h3>Kas RT</h3>
-            <p>Rp <%= (stats.balances && stats.balances.rt || 0).toLocaleString('id-ID') %>
+            <p>Rp <%= formatNumber(stats.balances && stats.balances.rt || 0) %>
             </p>
         </div>
     </div>
@@ -38,7 +38,7 @@
         </div>
         <div class="stat-info">
             <h3>Total Kas Keseluruhan</h3>
-            <p>Rp <%= (stats.totalBalance || 0).toLocaleString('id-ID') %>
+            <p>Rp <%= formatNumber(stats.totalBalance || 0) %>
             </p>
         </div>
     </div>
@@ -84,36 +84,43 @@
                 </div>
             </div>
             <% } %>
+</div>
 
-                <!-- Charts Area -->
-                <div class="chart-container full-width">
-                    <h3>Arus Kas Bulanan</h3>
-                    <canvas id="cashflowChart"></canvas>
-                </div>
+<!-- Charts Section -->
+<div class="dashboard-section mt-6">
+    <div class="chart-container full-width">
+        <h3>Arus Kas Bulanan</h3>
+        <canvas id="cashflowChart" data-chart='<%- JSON.stringify(stats.chartData) %>'></canvas>
+    </div>
 </div>
 
 <script>
-    // Placeholder for chart initialization
     document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('cashflowChart').getContext('2d');
+        const canvas = document.getElementById('cashflowChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const chartData = JSON.parse(canvas.getAttribute('data-chart'));
+
         new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'],
+                labels: chartData.labels,
                 datasets: [{
-                    label: 'Pemasukan',
-                    data: [<%= stats.cashflow.income.join(', ') %>],
-                    borderColor: '#48bb78',
-                    backgroundColor: 'rgba(72, 187, 120, 0.1)',
-                    fill: true,
-                    tension: 0.4
+                    label: 'Kas Perumahan',
+                    data: chartData.housing,
+                    backgroundColor: '#667eea',
+                    borderRadius: 4
                 }, {
-                    label: 'Pengeluaran',
-                    data: [<%= stats.cashflow.expense.join(', ') %>],
-                    borderColor: '#f56565',
-                    backgroundColor: 'rgba(245, 101, 101, 0.1)',
-                    fill: true,
-                    tension: 0.4
+                    label: 'Dana Sosial',
+                    data: chartData.social,
+                    backgroundColor: '#ed8936',
+                    borderRadius: 4
+                }, {
+                    label: 'Kas RT',
+                    data: chartData.rt,
+                    backgroundColor: '#48bb78',
+                    borderRadius: 4
                 }]
             },
             options: {
@@ -121,6 +128,21 @@
                 plugins: {
                     legend: {
                         position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    const val = context.parsed.y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                                    label += 'Rp ' + val;
+                                }
+                                return label;
+                            }
+                        }
                     }
                 }
             }
@@ -131,12 +153,17 @@
 <style>
     .dashboard-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         gap: 1.5rem;
+        margin-bottom: 2rem;
     }
 
-    .full-width {
-        grid-column: 1 / -1;
+    .dashboard-section {
+        width: 100%;
+    }
+
+    .mt-6 {
+        margin-top: 1.5rem;
     }
 
     .stat-card {

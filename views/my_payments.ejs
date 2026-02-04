@@ -73,7 +73,7 @@
                                         input.addEventListener('change', () => {
                                             const checkedCount = document.querySelectorAll('.month-input:checked').length;
                                             const total = checkedCount * ratePerMonth;
-                                            totalDisplay.innerText = 'Rp ' + total.toLocaleString('id-ID');
+                                            totalDisplay.innerText = 'Rp ' + total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                                             submitBtn.disabled = checkedCount === 0;
                                         });
                                     });
