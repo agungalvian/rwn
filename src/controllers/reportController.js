@@ -18,70 +18,116 @@ exports.viewReports = (req, res) => {
         params.push(month);
     }
 
-    const query = `
-        SELECT m.*, u.full_name as resident_name 
-        FROM mutations m 
-        LEFT JOIN payments p ON m.payment_id = p.id 
-        LEFT JOIN users u ON p.user_id = u.id 
-        ${whereClause} 
-        ORDER BY m.date DESC
-    `;
+    let initialWhere = '';
+    let initialParams = [];
+    let hasFilter = false;
 
-    db.all(query, params, (err, rows) => {
-        if (err) return res.status(500).send('Database Error');
+    if (month && year) {
+        initialWhere = 'WHERE date < ?';
+        initialParams.push(`${year}-${month}-01`);
+        hasFilter = true;
+    } else if (year) {
+        initialWhere = 'WHERE date < ?';
+        initialParams.push(`${year}-01-01`);
+        hasFilter = true;
+    }
 
-        const summary = {
-            housing: { in: 0, out: 0, balance: 0 },
-            social: { in: 0, out: 0, balance: 0 },
-            rt: { in: 0, out: 0, balance: 0 },
-            total: { balance: 0 }
-        };
+    const initialBalances = {
+        housing: 0,
+        social: 0,
+        rt: 0
+    };
 
-        const aggregatedMutations = [];
-        const paymentGroups = {};
+    const runReportQuery = () => {
+        const query = `
+            SELECT m.*, u.full_name as resident_name 
+            FROM mutations m 
+            LEFT JOIN payments p ON m.payment_id = p.id 
+            LEFT JOIN users u ON p.user_id = u.id 
+            ${whereClause} 
+            ORDER BY m.date DESC
+        `;
 
-        rows.forEach(r => {
-            // Calculate summary (always use individual records)
-            if (r.fund_type && summary[r.fund_type]) {
-                if (r.type === 'in') summary[r.fund_type].in += r.amount;
-                else summary[r.fund_type].out += r.amount;
-            }
+        db.all(query, params, (err, rows) => {
+            if (err) return res.status(500).send('Database Error');
 
-            // Aggregate for display
-            if (r.payment_id) {
-                if (!paymentGroups[r.payment_id]) {
-                    paymentGroups[r.payment_id] = {
-                        ...r,
-                        amount: 0,
-                        fund_type: 'multiple', // Placeholder for aggregated funds
-                        is_aggregated: true
-                    };
-                    aggregatedMutations.push(paymentGroups[r.payment_id]);
+            const summary = {
+                housing: { initial: initialBalances.housing, in: 0, out: 0, balance: initialBalances.housing },
+                social: { initial: initialBalances.social, in: 0, out: 0, balance: initialBalances.social },
+                rt: { initial: initialBalances.rt, in: 0, out: 0, balance: initialBalances.rt },
+                total: { initial: 0, balance: 0 }
+            };
+
+            const aggregatedMutations = [];
+            const paymentGroups = {};
+
+            rows.forEach(r => {
+                // Calculate summary (always use individual records)
+                if (r.fund_type && summary[r.fund_type]) {
+                    if (r.type === 'in') summary[r.fund_type].in += r.amount;
+                    else summary[r.fund_type].out += r.amount;
                 }
-                paymentGroups[r.payment_id].amount += r.amount;
-            } else {
-                aggregatedMutations.push(r);
-            }
-        });
 
-        // Calculate balances
-        summary.total = { in: 0, out: 0, balance: 0 };
-        ['housing', 'social', 'rt'].forEach(type => {
-            summary[type].balance = summary[type].in - summary[type].out;
-            summary.total.in += summary[type].in;
-            summary.total.out += summary[type].out;
-            summary.total.balance += summary[type].balance;
-        });
+                // Aggregate for display
+                if (r.payment_id) {
+                    if (!paymentGroups[r.payment_id]) {
+                        paymentGroups[r.payment_id] = {
+                            ...r,
+                            amount: 0,
+                            fund_type: 'multiple', // Placeholder for aggregated funds
+                            is_aggregated: true
+                        };
+                        aggregatedMutations.push(paymentGroups[r.payment_id]);
+                    }
+                    paymentGroups[r.payment_id].amount += r.amount;
+                } else {
+                    aggregatedMutations.push(r);
+                }
+            });
 
-        res.render('reports', {
-            title: 'Laporan Keuangan',
-            user: req.session.user,
-            mutations: aggregatedMutations,
-            summary: summary,
-            path: '/reports',
-            filters: { month, year }
+            // Calculate balances
+            summary.total = { initial: 0, in: 0, out: 0, balance: 0 };
+            ['housing', 'social', 'rt'].forEach(type => {
+                summary[type].balance = summary[type].initial + summary[type].in - summary[type].out;
+                summary.total.initial += summary[type].initial;
+                summary.total.in += summary[type].in;
+                summary.total.out += summary[type].out;
+                summary.total.balance += summary[type].balance;
+            });
+
+            res.render('reports', {
+                title: 'Laporan Keuangan',
+                user: req.session.user,
+                mutations: aggregatedMutations,
+                summary: summary,
+                path: '/reports',
+                filters: { month, year }
+            });
         });
-    });
+    };
+
+    if (hasFilter) {
+        const initialQuery = `
+            SELECT fund_type, type, SUM(amount) as total 
+            FROM mutations 
+            ${initialWhere} 
+            GROUP BY fund_type, type
+        `;
+
+        db.all(initialQuery, initialParams, (err, initialRows) => {
+            if (err) return res.status(500).send('Database Error');
+
+            initialRows.forEach(r => {
+                if (r.fund_type && initialBalances.hasOwnProperty(r.fund_type)) {
+                    if (r.type === 'in') initialBalances[r.fund_type] += parseInt(r.total) || 0;
+                    else initialBalances[r.fund_type] -= parseInt(r.total) || 0;
+                }
+            });
+            runReportQuery();
+        });
+    } else {
+        runReportQuery();
+    }
 };
 
 exports.viewMutations = (req, res) => {

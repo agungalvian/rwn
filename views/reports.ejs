@@ -35,34 +35,46 @@
     <div class="summary-grid">
         <div class="card bg-blue">
             <h3>Kas Perumahan</h3>
-            <div class="flex-between">
+            <div class="balance-item">
+                <small>Saldo Awal:</small> <span>Rp <%= formatNumber(summary.housing.initial) %></span>
+            </div>
+            <div class="flex-between mt-1">
                 <span>Masuk: Rp <%= formatNumber(summary.housing.in) %></span>
                 <span>Keluar: Rp <%= formatNumber(summary.housing.out) %></span>
             </div>
             <hr>
-            <p>Saldo: <strong>Rp <%= formatNumber(summary.housing.balance) %></strong></p>
+            <p>Saldo Akhir: <strong>Rp <%= formatNumber(summary.housing.balance) %></strong></p>
         </div>
         <div class="card bg-orange">
             <h3>Dana Sosial</h3>
-            <div class="flex-between">
+            <div class="balance-item">
+                <small>Saldo Awal:</small> <span>Rp <%= formatNumber(summary.social.initial) %></span>
+            </div>
+            <div class="flex-between mt-1">
                 <span>Masuk: Rp <%= formatNumber(summary.social.in) %></span>
                 <span>Keluar: Rp <%= formatNumber(summary.social.out) %></span>
             </div>
             <hr>
-            <p>Saldo: <strong>Rp <%= formatNumber(summary.social.balance) %></strong></p>
+            <p>Saldo Akhir: <strong>Rp <%= formatNumber(summary.social.balance) %></strong></p>
         </div>
         <div class="card bg-green">
             <h3>Kas RT</h3>
-            <div class="flex-between">
+            <div class="balance-item">
+                <small>Saldo Awal:</small> <span>Rp <%= formatNumber(summary.rt.initial) %></span>
+            </div>
+            <div class="flex-between mt-1">
                 <span>Masuk: Rp <%= formatNumber(summary.rt.in) %></span>
                 <span>Keluar: Rp <%= formatNumber(summary.rt.out) %></span>
             </div>
             <hr>
-            <p>Saldo: <strong>Rp <%= formatNumber(summary.rt.balance) %></strong></p>
+            <p>Saldo Akhir: <strong>Rp <%= formatNumber(summary.rt.balance) %></strong></p>
         </div>
         <div class="card bg-gold">
             <h3>Total Kas Keseluruhan</h3>
-            <div class="flex-between">
+            <div class="balance-item">
+                <small>Saldo Awal:</small> <span>Rp <%= formatNumber(summary.total.initial) %></span>
+            </div>
+            <div class="flex-between mt-1">
                 <span>Total Masuk: Rp <%= formatNumber(summary.total.in) %></span>
                 <span>Total Keluar: Rp <%= formatNumber(summary.total.out) %></span>
             </div>
@@ -337,6 +349,18 @@
         justify-content: space-between;
         font-size: 0.85rem;
         margin-bottom: 0.5rem;
+    }
+
+    .balance-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+        color: rgba(0, 0, 0, 0.6);
+    }
+
+    .mt-1 {
+        margin-top: 0.25rem;
     }
 
     hr {
