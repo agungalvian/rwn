@@ -93,8 +93,17 @@ async function initDb() {
                 title TEXT NOT NULL,
                 content TEXT NOT NULL,
                 category TEXT NOT NULL CHECK (category IN ('important', 'event', 'documentation')),
+                image TEXT,
                 date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`);
+
+            // Migration: Add image if not exists in announcements
+            await pool.query(`DO $$ 
+                BEGIN 
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='announcements' AND column_name='image') THEN
+                        ALTER TABLE announcements ADD COLUMN image TEXT;
+                    END IF;
+                END $$;`);
 
             // Payments Table
             await pool.query(`CREATE TABLE IF NOT EXISTS payments (

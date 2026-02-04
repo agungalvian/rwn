@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const announcementController = require('../controllers/announcementController');
+const upload = require('../middleware/upload');
 
 const requireAdmin = (req, res, next) => {
     if (req.session.userId && req.session.role === 'admin') {
@@ -11,7 +12,7 @@ const requireAdmin = (req, res, next) => {
 };
 
 router.get('/', announcementController.listAnnouncements);
-router.post('/add', requireAdmin, announcementController.createAnnouncement);
+router.post('/add', requireAdmin, upload.single('image'), announcementController.createAnnouncement);
 router.get('/delete/:id', requireAdmin, announcementController.deleteAnnouncement);
 
 module.exports = router;

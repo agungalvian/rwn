@@ -25,8 +25,10 @@ exports.listAnnouncements = (req, res) => {
 
 exports.createAnnouncement = (req, res) => {
     const { title, content, category } = req.body;
-    db.run('INSERT INTO announcements (title, content, category) VALUES (?, ?, ?)',
-        [title, content, category],
+    const image = req.file ? req.file.filename : null;
+
+    db.run('INSERT INTO announcements (title, content, category, image) VALUES (?, ?, ?, ?)',
+        [title, content, category, image],
         (err) => {
             if (err) console.error(err);
             res.redirect('/announcements');
