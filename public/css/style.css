@@ -326,9 +326,12 @@ a {
 }
 
 @media (max-width: 992px) {
+
+    html,
     body {
-        height: auto;
-        overflow: auto;
+        height: auto !important;
+        overflow: auto !important;
+        min-height: 100% !important;
     }
 
     .sidebar {
@@ -338,8 +341,12 @@ a {
         bottom: 0;
         z-index: 999;
         transition: left 0.3s ease;
-        height: 100vh;
-        overflow-y: auto;
+        height: 100% !important;
+        min-height: -webkit-fill-available;
+        overflow-y: auto !important;
+        padding-bottom: 80px !important;
+        /* Extra space for bottom menu */
+        border-radius: 0 !important;
     }
 
     .sidebar.active {
@@ -355,8 +362,10 @@ a {
     }
 
     .app-container {
-        display: block;
-        height: auto;
+        display: block !important;
+        height: auto !important;
+        min-height: 100vh;
+        overflow: visible !important;
     }
 
     .top-bar {
@@ -364,9 +373,15 @@ a {
     }
 
     .main-content {
-        padding: 1.5rem 1rem 5rem 1rem;
-        height: auto;
-        overflow: visible;
+        padding: 1.5rem 1rem 100px 1rem !important;
+        height: auto !important;
+        overflow: visible !important;
+        flex: none !important;
+    }
+
+    .content-wrapper {
+        height: auto !important;
+        overflow: visible !important;
     }
 
     /* Grid & Card Adjustments */
@@ -422,5 +437,43 @@ a {
 
     .search-form input {
         width: 100%;
+    }
+}
+
+/* Force scroll for mobile */
+@media (max-width: 992px) {
+    html {
+        height: auto !important;
+        overflow-y: auto !important;
+    }
+
+    body {
+        height: auto !important;
+        overflow-y: auto !important;
+        min-height: 100vh !important;
+        position: relative !important;
+        display: block !important;
+    }
+
+    .app-container {
+        height: auto !important;
+        min-height: 100vh !important;
+        display: block !important;
+        overflow: visible !important;
+    }
+
+    .main-content {
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow: visible !important;
+        padding-bottom: 15rem !important;
+        /* Extremely safe bottom padding */
+        display: block !important;
+    }
+
+    .content-wrapper {
+        height: auto !important;
+        overflow: visible !important;
+        display: block !important;
     }
 }
