@@ -1,16 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const settingsController = require('../controllers/settingsController');
-
-const requireAdmin = (req, res, next) => {
-    if (req.session.userId && req.session.role === 'admin') {
-        next();
-    } else {
-        res.status(403).send('Forbidden');
-    }
-};
+const { requireAdmin, requireWriteAdmin } = require('../middleware/authMiddleware');
 
 router.get('/', requireAdmin, settingsController.getSettings);
-router.post('/update', requireAdmin, settingsController.updateSettings);
+router.post('/update', requireWriteAdmin, settingsController.updateSettings);
 
 module.exports = router;

@@ -4,62 +4,70 @@
             <h3>Catat Mutasi (Masuk/Keluar)</h3>
         </div>
         <div class="card-body">
-            <form action="/mutations/add" method="POST" enctype="multipart/form-data" class="mutation-form">
-                <div class="form-row">
-                    <div class="form-group flex-1">
-                        <label>Sumber Dana</label>
-                        <select name="fund_type" class="form-control" required>
-                            <option value="housing">Kas Perumahan</option>
-                            <option value="social">Dana Sosial</option>
-                            <option value="rt">Kas RT</option>
-                        </select>
+            <% if (user.role==='admin' ) { %>
+                <form action="/mutations/add" method="POST" enctype="multipart/form-data" class="mutation-form">
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label>Sumber Dana</label>
+                            <select name="fund_type" class="form-control" required>
+                                <option value="housing">Kas Perumahan</option>
+                                <option value="social">Dana Sosial</option>
+                                <option value="rt">Kas RT</option>
+                            </select>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label>Jenis</label>
+                            <select name="type" class="form-control" required>
+                                <option value="in">Uang Masuk</option>
+                                <option value="out">Uang Keluar</option>
+                            </select>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label>Tanggal</label>
+                            <input type="date" name="date" class="form-control"
+                                value="<%= new Date().toISOString().split('T')[0] %>">
+                        </div>
                     </div>
-                    <div class="form-group flex-1">
-                        <label>Jenis</label>
-                        <select name="type" class="form-control" required>
-                            <option value="in">Uang Masuk</option>
-                            <option value="out">Uang Keluar</option>
-                        </select>
-                    </div>
-                    <div class="form-group flex-1">
-                        <label>Tanggal</label>
-                        <input type="date" name="date" class="form-control"
-                            value="<%= new Date().toISOString().split('T')[0] %>">
-                    </div>
-                </div>
 
-                <div class="form-row mt-2">
-                    <div class="form-group flex-1">
-                        <label>Jumlah (Rp)</label>
-                        <input type="number" name="amount" placeholder="Contoh: 50000" class="form-control" required>
+                    <div class="form-row mt-2">
+                        <div class="form-group flex-1">
+                            <label>Jumlah (Rp)</label>
+                            <input type="number" name="amount" placeholder="Contoh: 50000" class="form-control"
+                                required>
+                        </div>
+                        <div class="form-group flex-2">
+                            <label>Keterangan</label>
+                            <input type="text" name="description" placeholder="Deskripsi transaksi" class="form-control"
+                                required>
+                        </div>
                     </div>
-                    <div class="form-group flex-2">
-                        <label>Keterangan</label>
-                        <input type="text" name="description" placeholder="Deskripsi transaksi" class="form-control"
-                            required>
-                    </div>
-                </div>
 
-                <div class="form-row mt-2">
-                    <div class="form-group flex-1">
-                        <label>Kategori</label>
-                        <select name="category" class="form-control">
-                            <option value="maintenance">Perawatan</option>
-                            <option value="event">Kegiatan</option>
-                            <option value="other">Lainnya</option>
-                            <option value="iuran">Iuran Warga</option>
-                        </select>
+                    <div class="form-row mt-2">
+                        <div class="form-group flex-1">
+                            <label>Kategori</label>
+                            <select name="category" class="form-control">
+                                <option value="maintenance">Perawatan</option>
+                                <option value="event">Kegiatan</option>
+                                <option value="other">Lainnya</option>
+                                <option value="iuran">Iuran Warga</option>
+                            </select>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label>Upload Bukti</label>
+                            <input type="file" name="proof_image" class="form-control" accept="image/*">
+                        </div>
+                        <div class="form-group flex-none align-self-end">
+                            <button type="submit" class="btn-primary w-100 mb-3" style="height: 45px;">Simpan
+                                Transaksi</button>
+                        </div>
                     </div>
-                    <div class="form-group flex-1">
-                        <label>Upload Bukti</label>
-                        <input type="file" name="proof_image" class="form-control" accept="image/*">
+                </form>
+                <% } else { %>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Anda memiliki akses <strong>view-only</strong>. Pencatatan
+                        mutasi hanya dapat dilakukan oleh Admin Utama.
                     </div>
-                    <div class="form-group flex-none align-self-end">
-                        <button type="submit" class="btn-primary w-100 mb-3" style="height: 45px;">Simpan
-                            Transaksi</button>
-                    </div>
-                </div>
-            </form>
+                    <% } %>
         </div>
     </div>
 

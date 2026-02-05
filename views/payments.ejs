@@ -49,7 +49,7 @@
                             <%= new Date(p.date_submitted).toLocaleDateString('id-ID') %>
                         </td>
                         <td>
-                            <% if (p.status==='pending' ) { %>
+                            <% if (p.status==='pending' && user.role==='admin' ) { %>
                                 <button class="btn-sm btn-success"
                                     onclick="openConfirmModal('<%= p.id %>', 'approved')">Terima</button>
                                 <button class="btn-sm btn-danger"

@@ -32,7 +32,7 @@
                 <li><a href="/dashboard" class="<%= path === '/dashboard' ? 'active' : '' %>"><i
                             class="fas fa-home"></i> Dashboard</a></li>
 
-                <% if (user.role==='admin' ) { %>
+                <% if (user.role==='admin' || user.role==='viewer' ) { %>
                     <li><a href="/residents" class="<%= path === '/residents' ? 'active' : '' %>"><i
                                 class="fas fa-users"></i> Data Warga</a></li>
                     <li><a href="/payments" class="<%= path === '/payments' ? 'active' : '' %>"><i
@@ -48,6 +48,8 @@
                     <% } else { %>
                         <li><a href="/my-payments" class="<%= path === '/my-payments' ? 'active' : '' %>"><i
                                     class="fas fa-wallet"></i> Pembayaran Saya</a></li>
+                        <li><a href="/my-status" class="<%= path === '/my-status' ? 'active' : '' %>"><i
+                                    class="fas fa-calendar-check"></i> Status Iuran</a></li>
                         <% } %>
 
                             <li><a href="/announcements" class="<%= path === '/announcements' ? 'active' : '' %>"><i

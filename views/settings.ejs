@@ -3,35 +3,46 @@
         <h3>Pengaturan Nominal Iuran</h3>
     </div>
     <div class="card-body">
-        <% if (typeof req !== 'undefined' && req.query.success) { %>
-            <div class="alert alert-success"><%= req.query.success %></div>
-        <% } %>
-
-        <form action="/settings/update" method="POST">
-            <div class="form-group">
-                <label>Iuran Perumahan (Rp)</label>
-                <input type="number" name="housing_dues" value="<%= settings.housing_dues %>" class="form-control" required>
-                <small class="text-muted">Digunakan untuk keamanan, kebersihan, dan perawatan lingkungan.</small>
+        <% if (typeof req !=='undefined' && req.query.success) { %>
+            <div class="alert alert-success">
+                <%= req.query.success %>
             </div>
-            
-            <div class="form-group">
-                <label>Iuran Dana Sosial (Rp)</label>
-                <input type="number" name="social_dues" value="<%= settings.social_dues %>" class="form-control" required>
-                <small class="text-muted">Digunakan untuk santunan kematian, sakit, dan kegiatan sosial.</small>
-            </div>
+            <% } %>
 
-            <div class="form-group">
-                <label>Iuran Kas RT (Rp)</label>
-                <input type="number" name="rt_dues" value="<%= settings.rt_dues %>" class="form-control" required>
-                <small class="text-muted">Digunakan untuk operasional RT dan kegiatan warga.</small>
-            </div>
+                <form action="/settings/update" method="POST">
+                    <div class="form-group">
+                        <label>Iuran Perumahan (Rp)</label>
+                        <input type="number" name="housing_dues" value="<%= settings.housing_dues %>"
+                            class="form-control" required <%=user.role !=='admin' ? 'readonly' : '' %>>
+                        <small class="text-muted">Digunakan untuk keamanan, kebersihan, dan perawatan
+                            lingkungan.</small>
+                    </div>
 
-            <div class="total-preview">
-                <p>Total Iuran Warga per Bulan: <strong id="totalPreview">Rp 0</strong></p>
-            </div>
+                    <div class="form-group">
+                        <label>Iuran Dana Sosial (Rp)</label>
+                        <input type="number" name="social_dues" value="<%= settings.social_dues %>" class="form-control"
+                            required <%=user.role !=='admin' ? 'readonly' : '' %>>
+                        <small class="text-muted">Digunakan untuk santunan kematian, sakit, dan kegiatan sosial.</small>
+                    </div>
 
-            <button type="submit" class="btn-primary">Simpan Perubahan</button>
-        </form>
+                    <div class="form-group">
+                        <label>Iuran Kas RT (Rp)</label>
+                        <input type="number" name="rt_dues" value="<%= settings.rt_dues %>" class="form-control"
+                            required <%=user.role !=='admin' ? 'readonly' : '' %>>
+                        <small class="text-muted">Digunakan untuk operasional RT dan kegiatan warga.</small>
+                    </div>
+
+                    <div class="total-preview">
+                        <p>Total Iuran Warga per Bulan: <strong id="totalPreview">Rp 0</strong></p>
+                    </div>
+
+                    <% if (user.role==='admin' ) { %>
+                        <button type="submit" class="btn-primary">Simpan Perubahan</button>
+                        <% } else { %>
+                            <div class="alert alert-info">Akses view-only: Anda tidak dapat mengubah pengaturan ini.
+                            </div>
+                            <% } %>
+                </form>
     </div>
 </div>
 
@@ -59,12 +70,14 @@
         max-width: 600px;
         margin: 0 auto;
     }
+
     .text-muted {
         display: block;
         margin-top: 0.25rem;
         color: #718096;
         font-size: 0.85rem;
     }
+
     .total-preview {
         background: #f7fafc;
         padding: 1rem;
@@ -73,6 +86,7 @@
         text-align: center;
         font-size: 1.1rem;
     }
+
     .alert-success {
         background: #c6f6d5;
         color: #22543d;

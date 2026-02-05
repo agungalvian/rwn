@@ -33,6 +33,33 @@ exports.myPayments = (req, res) => {
     });
 };
 
+// Resident: View their dues status matrix
+exports.myStatus = (req, res) => {
+    const userId = req.session.userId;
+    const year = req.query.year || new Date().getFullYear();
+
+    db.all("SELECT month_paid_for FROM payments WHERE user_id = ? AND status = 'approved' AND month_paid_for LIKE ?", [userId, `${year}-%`], (err, rows) => {
+        if (err) return res.status(500).send('Database Error');
+
+        const paymentMap = {};
+        rows.forEach(p => {
+            p.month_paid_for.split(',').forEach(m => {
+                if (m.trim().startsWith(year.toString())) {
+                    paymentMap[m.trim()] = true;
+                }
+            });
+        });
+
+        res.render('my_status', {
+            title: 'Status Iuran Anda',
+            user: req.session.user,
+            year: year,
+            paymentMap: paymentMap,
+            path: '/my-status'
+        });
+    });
+};
+
 // Resident: Submit Payment
 exports.submitPayment = (req, res) => {
     const { months, payment_date } = req.body; // Array of months + payment date

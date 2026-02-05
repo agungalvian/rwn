@@ -81,11 +81,20 @@ async function initDb() {
                 id SERIAL PRIMARY KEY,
                 username TEXT UNIQUE NOT NULL,
                 password_hash TEXT NOT NULL,
-                role TEXT NOT NULL CHECK (role IN ('admin', 'resident')),
+                role TEXT NOT NULL CHECK (role IN ('admin', 'resident', 'viewer')),
                 full_name TEXT,
                 house_number TEXT,
                 phone TEXT
             )`);
+
+            // Migration: Update role constraint if needed
+            await pool.query(`DO $$ 
+                BEGIN 
+                    ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check;
+                    ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('admin', 'resident', 'viewer'));
+                EXCEPTION WHEN OTHERS THEN
+                    NULL;
+                END $$;`);
 
             // Announcements Table
             await pool.query(`CREATE TABLE IF NOT EXISTS announcements (
