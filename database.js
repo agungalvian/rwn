@@ -84,8 +84,17 @@ async function initDb() {
                 role TEXT NOT NULL CHECK (role IN ('admin', 'resident', 'viewer')),
                 full_name TEXT,
                 house_number TEXT,
-                phone TEXT
+                phone TEXT,
+                occupancy_status TEXT DEFAULT 'dihuni' CHECK (occupancy_status IN ('dihuni', 'sewa', 'kosong'))
             )`);
+
+            // Migration: Add occupancy_status if not exists
+            await pool.query(`DO $$ 
+                BEGIN 
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='occupancy_status') THEN
+                        ALTER TABLE users ADD COLUMN occupancy_status TEXT DEFAULT 'dihuni' CHECK (occupancy_status IN ('dihuni', 'sewa', 'kosong'));
+                    END IF;
+                END $$;`);
 
             // Migration: Update role constraint if needed
             await pool.query(`DO $$ 

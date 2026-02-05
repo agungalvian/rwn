@@ -24,6 +24,17 @@
                     <input type="text" name="phone" class="form-control" value="<%= resident.phone %>" required>
                 </div>
                 <div class="form-group mt-3">
+                    <label>Status Hunian</label>
+                    <select name="occupancy_status" class="form-control" required>
+                        <option value="dihuni" <%=resident.occupancy_status==='dihuni' ? 'selected' : '' %>>Dihuni
+                            Pemilik</option>
+                        <option value="sewa" <%=resident.occupancy_status==='sewa' ? 'selected' : '' %>>Sewa/Kontrak
+                        </option>
+                        <option value="kosong" <%=resident.occupancy_status==='kosong' ? 'selected' : '' %>>Kosong
+                            (Tidak Berpenghuni)</option>
+                    </select>
+                </div>
+                <div class="form-group mt-3">
                     <label>Password Baru (Kosongkan jika tidak ingin ganti)</label>
                     <input type="password" name="password" class="form-control" minlength="6">
                 </div>

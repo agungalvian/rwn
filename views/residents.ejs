@@ -19,6 +19,7 @@
                     <th>Nama Lengkap</th>
                     <th>Username</th>
                     <th>No. HP</th>
+                    <th>Status</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -36,6 +37,14 @@
                         </td>
                         <td>
                             <%= resident.phone %>
+                        </td>
+                        <td>
+                            <% let badgeClass='dihuni' ; if (resident.occupancy_status==='sewa' ) badgeClass='sewa' ; if
+                                (resident.occupancy_status==='kosong' ) badgeClass='kosong' ; %>
+                                <span class="badge badge-occupancy-<%= resident.occupancy_status || 'dihuni' %>">
+                                    <%= (resident.occupancy_status || 'dihuni' ).charAt(0).toUpperCase() +
+                                        (resident.occupancy_status || 'dihuni' ).slice(1) %>
+                                </span>
                         </td>
                         <td>
                             <div class="action-buttons">
@@ -81,6 +90,14 @@
                 <div class="form-group">
                     <label>Username</label>
                     <input type="text" name="username" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Status Hunian</label>
+                    <select name="occupancy_status" class="form-control" required>
+                        <option value="dihuni">Dihuni Pemilik</option>
+                        <option value="sewa">Sewa/Kontrak</option>
+                        <option value="kosong">Kosong (Tidak Berpenghuni)</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Password Default</label>
@@ -160,6 +177,31 @@
                 border: 1px solid #888;
                 width: 400px;
                 border-radius: 1rem;
+            }
+
+            .badge-occupancy-dihuni {
+                background: #c6f6d5;
+                color: #22543d;
+            }
+
+            .badge-occupancy-sewa {
+                background: #feebc8;
+                color: #7b341e;
+            }
+
+            .badge-occupancy-kosong {
+                background: #edf2f7;
+                color: #4a5568;
+            }
+
+            .badge-occupancy-dihuni,
+            .badge-occupancy-sewa,
+            .badge-occupancy-kosong {
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.25rem;
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-transform: capitalize;
             }
 
             .close {

@@ -25,14 +25,14 @@ exports.listResidents = (req, res) => {
 };
 
 exports.addResident = (req, res) => {
-    const { username, password, full_name, house_number, phone } = req.body;
+    const { username, password, full_name, house_number, phone, occupancy_status } = req.body;
     const saltRounds = 10;
 
     bcrypt.hash(password, saltRounds, (err, hash) => {
         if (err) return res.status(500).send('Error hashing password');
 
-        const sql = `INSERT INTO users (username, password_hash, role, full_name, house_number, phone) VALUES (?, ?, 'resident', ?, ?, ?)`;
-        db.run(sql, [username, hash, full_name, house_number, phone], (err) => {
+        const sql = `INSERT INTO users (username, password_hash, role, full_name, house_number, phone, occupancy_status) VALUES (?, ?, 'resident', ?, ?, ?, ?)`;
+        db.run(sql, [username, hash, full_name, house_number, phone, occupancy_status || 'dihuni'], (err) => {
             if (err) {
                 console.error(err);
                 // In a real app, handle unique constraint errors
@@ -66,20 +66,20 @@ exports.editResidentPage = (req, res) => {
 
 exports.updateResident = (req, res) => {
     const id = req.params.id;
-    const { username, full_name, house_number, phone, password } = req.body;
+    const { username, full_name, house_number, phone, password, occupancy_status } = req.body;
 
     if (password && password.trim() !== '') {
         bcrypt.hash(password, 10, (err, hash) => {
             if (err) return res.status(500).send('Error hashing password');
-            db.run("UPDATE users SET username = ?, password_hash = ?, full_name = ?, house_number = ?, phone = ? WHERE id = ? AND role = 'resident'",
-                [username, hash, full_name, house_number, phone, id], (err) => {
+            db.run("UPDATE users SET username = ?, password_hash = ?, full_name = ?, house_number = ?, phone = ?, occupancy_status = ? WHERE id = ? AND role = 'resident'",
+                [username, hash, full_name, house_number, phone, occupancy_status, id], (err) => {
                     if (err) return res.redirect(`/residents?error=Gagal update data`);
                     res.redirect('/residents?success=Data warga berhasil diperbarui');
                 });
         });
     } else {
-        db.run("UPDATE users SET username = ?, full_name = ?, house_number = ?, phone = ? WHERE id = ? AND role = 'resident'",
-            [username, full_name, house_number, phone, id], (err) => {
+        db.run("UPDATE users SET username = ?, full_name = ?, house_number = ?, phone = ?, occupancy_status = ? WHERE id = ? AND role = 'resident'",
+            [username, full_name, house_number, phone, occupancy_status, id], (err) => {
                 if (err) return res.redirect(`/residents?error=Gagal update data`);
                 res.redirect('/residents?success=Data warga berhasil diperbarui');
             });
