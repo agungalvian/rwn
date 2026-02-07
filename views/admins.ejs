@@ -40,12 +40,20 @@
                                 </td>
                                 <td>
                                     <% if (admin.id !==user.id && user.role==='admin' ) { %>
-                                        <a href="/admins/delete/<%= admin.id %>" class="btn-danger-sm"
+                                        <button class="btn-sm btn-info"
+                                            onclick="openEditModal('<%= admin.id %>', '<%= admin.username %>', '<%= admin.full_name %>', '<%= admin.role %>')">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <a href="/admins/delete/<%= admin.id %>" class="btn-sm btn-danger-sm"
                                             onclick="return confirm('Yakin ingin menghapus admin ini?')">
                                             <i class="fas fa-trash"></i> Hapus
                                         </a>
                                         <% } else if (admin.id===user.id) { %>
-                                            <span class="badge badge-info">Anda</span>
+                                            <button class="btn-sm btn-info"
+                                                onclick="openEditModal('<%= admin.id %>', '<%= admin.username %>', '<%= admin.full_name %>', '<%= admin.role %>')">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <span class="badge badge-info ml-2">Anda</span>
                                             <% } else { %>
                                                 <span class="text-muted">-</span>
                                                 <% } %>
@@ -87,7 +95,48 @@
             </form>
         </div>
     </div>
+
+    <!-- Edit Admin Modal -->
+    <div id="editAdminModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('editAdminModal').style.display='none'">&times;</span>
+            <h3>Edit Admin</h3>
+            <form action="/admins/update" method="POST">
+                <input type="hidden" name="id" id="edit_id">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" name="full_name" id="edit_full_name" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" id="edit_username" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Password Baru (Kosongkan jika tidak ingin mengubah)</label>
+                    <input type="password" name="password" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" id="edit_role" class="form-control" required>
+                        <option value="admin">Administrator (Akses Penuh)</option>
+                        <option value="viewer">View Only (Hanya Lihat)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary w-100">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
     <% } %>
+
+        <script>
+            function openEditModal(id, username, fullName, role) {
+                document.getElementById('edit_id').value = id;
+                document.getElementById('edit_username').value = username;
+                document.getElementById('edit_full_name').value = fullName;
+                document.getElementById('edit_role').value = role;
+                document.getElementById('editAdminModal').style.display = 'block';
+            }
+        </script>
 
         <style>
             .actions-bar {
@@ -139,6 +188,26 @@
                 padding: 20px;
                 width: 400px;
                 border-radius: 1rem;
+            }
+
+            .btn-info {
+                background-color: #3182ce;
+                color: white;
+                border: none;
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.25rem;
+                cursor: pointer;
+                margin-right: 0.5rem;
+                text-decoration: none;
+                font-size: 0.9rem;
+            }
+
+            .btn-info:hover {
+                background-color: #2b6cb0;
+            }
+
+            .ml-2 {
+                margin-left: 0.5rem;
             }
 
             .close {

@@ -28,7 +28,12 @@
             <button type="submit" class="btn-primary-sm"><i class="fas fa-filter"></i> Filter</button>
             <a href="/reports" class="btn-secondary-sm">Reset</a>
         </form>
-        <button onclick="window.print()" class="btn-print"><i class="fas fa-print"></i> Cetak PDF</button>
+        <div class="action-buttons">
+            <a href="/reports/export?month=<%= filters.month %>&year=<%= filters.year %>" class="btn-excel">
+                <i class="fas fa-file-excel"></i> Export Excel
+            </a>
+            <button onclick="window.print()" class="btn-print"><i class="fas fa-print"></i> Cetak PDF</button>
+        </div>
     </div>
 
     <!-- Summary Cards -->
@@ -230,6 +235,26 @@
 
     .btn-print:hover {
         background: #2d3748;
+    }
+
+    .btn-excel {
+        background: #48bb78;
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 99px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    .btn-excel:hover {
+        background: #38a169;
+        color: white;
     }
 
     .btn-proof {

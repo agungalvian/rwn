@@ -8,7 +8,7 @@ exports.loginPage = (req, res) => {
 exports.login = (req, res) => {
     const { username, password } = req.body;
 
-    db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
+    db.get('SELECT * FROM users WHERE LOWER(username) = LOWER(?)', [username], (err, user) => {
         if (err) {
             return res.render('login', { error: 'An error occurred. Please try again.', layout: false });
         }

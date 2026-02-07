@@ -5,6 +5,7 @@ const { requireAdmin, requireWriteAdmin } = require('../middleware/authMiddlewar
 
 router.get('/', requireAdmin, adminController.listAdmins);
 router.post('/add', requireWriteAdmin, adminController.addAdmin);
+router.post('/update', requireWriteAdmin, adminController.updateAdmin);
 router.get('/delete/:id', requireWriteAdmin, adminController.deleteAdmin);
 
 module.exports = router;

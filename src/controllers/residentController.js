@@ -7,6 +7,7 @@ exports.listResidents = (req, res) => {
         SELECT * FROM users 
         WHERE role = 'resident' 
         AND (full_name LIKE ? OR house_number LIKE ?)
+        ORDER BY LOWER(username) ASC
     `;
 
     db.all(query, [`%${search}%`, `%${search}%`], (err, rows) => {
@@ -31,14 +32,20 @@ exports.addResident = (req, res) => {
     bcrypt.hash(password, saltRounds, (err, hash) => {
         if (err) return res.status(500).send('Error hashing password');
 
-        const sql = `INSERT INTO users (username, password_hash, role, full_name, house_number, phone, occupancy_status) VALUES (?, ?, 'resident', ?, ?, ?, ?)`;
-        db.run(sql, [username, hash, full_name, house_number, phone, occupancy_status || 'dihuni'], (err) => {
-            if (err) {
-                console.error(err);
-                // In a real app, handle unique constraint errors
-                return res.redirect('/residents?error=Failed to add resident');
+        // Check for duplicate username case-insensitively
+        db.get('SELECT id FROM users WHERE LOWER(username) = LOWER(?)', [username], (err, row) => {
+            if (row) {
+                return res.redirect('/residents?error=Username sudah digunakan');
             }
-            res.redirect('/residents');
+
+            const sql = `INSERT INTO users (username, password_hash, role, full_name, house_number, phone, occupancy_status) VALUES (?, ?, 'resident', ?, ?, ?, ?)`;
+            db.run(sql, [username, hash, full_name, house_number, phone, occupancy_status || 'dihuni'], (err) => {
+                if (err) {
+                    console.error(err);
+                    return res.redirect('/residents?error=Failed to add resident');
+                }
+                res.redirect('/residents');
+            });
         });
     });
 };
@@ -68,20 +75,27 @@ exports.updateResident = (req, res) => {
     const id = req.params.id;
     const { username, full_name, house_number, phone, password, occupancy_status } = req.body;
 
-    if (password && password.trim() !== '') {
-        bcrypt.hash(password, 10, (err, hash) => {
-            if (err) return res.status(500).send('Error hashing password');
-            db.run("UPDATE users SET username = ?, password_hash = ?, full_name = ?, house_number = ?, phone = ?, occupancy_status = ? WHERE id = ? AND role = 'resident'",
-                [username, hash, full_name, house_number, phone, occupancy_status, id], (err) => {
+    // Check for duplicate username case-insensitively (excluding current user)
+    db.get('SELECT id FROM users WHERE LOWER(username) = LOWER(?) AND id != ?', [username, id], (err, row) => {
+        if (row) {
+            return res.redirect(`/residents?error=Username sudah digunakan`);
+        }
+
+        if (password && password.trim() !== '') {
+            bcrypt.hash(password, 10, (err, hash) => {
+                if (err) return res.status(500).send('Error hashing password');
+                db.run("UPDATE users SET username = ?, password_hash = ?, full_name = ?, house_number = ?, phone = ?, occupancy_status = ? WHERE id = ? AND role = 'resident'",
+                    [username, hash, full_name, house_number, phone, occupancy_status, id], (err) => {
+                        if (err) return res.redirect(`/residents?error=Gagal update data`);
+                        res.redirect('/residents?success=Data warga berhasil diperbarui');
+                    });
+            });
+        } else {
+            db.run("UPDATE users SET username = ?, full_name = ?, house_number = ?, phone = ?, occupancy_status = ? WHERE id = ? AND role = 'resident'",
+                [username, full_name, house_number, phone, occupancy_status, id], (err) => {
                     if (err) return res.redirect(`/residents?error=Gagal update data`);
                     res.redirect('/residents?success=Data warga berhasil diperbarui');
                 });
-        });
-    } else {
-        db.run("UPDATE users SET username = ?, full_name = ?, house_number = ?, phone = ?, occupancy_status = ? WHERE id = ? AND role = 'resident'",
-            [username, full_name, house_number, phone, occupancy_status, id], (err) => {
-                if (err) return res.redirect(`/residents?error=Gagal update data`);
-                res.redirect('/residents?success=Data warga berhasil diperbarui');
-            });
-    }
+        }
+    });
 };
